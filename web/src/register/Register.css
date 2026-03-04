@@ -1,0 +1,74 @@
+/* Container for the registration card */
+.auth-card {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+/* Header style */
+.auth-card h2 {
+  color: #1e40af; /* Deep University Blue */
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-family: sans-serif;
+}
+
+/* Spacing for input fields */
+.input-group {
+  margin-bottom: 1.2rem;
+  text-align: left;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #4b5563;
+  font-size: 0.9rem;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1.5px solid #d1d5db;
+  border-radius: 6px;
+  box-sizing: border-box; /* Crucial for layout */
+  font-size: 1rem;
+}
+
+/* Blue Button Style */
+.btn-blue {
+  width: 100%;
+  padding: 0.8rem;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 1rem;
+}
+
+.btn-blue:hover {
+  background-color: #1d4ed8;
+}
+
+/* Switch link at the bottom */
+.toggle-text {
+  text-align: center;
+  margin-top: 1.2rem;
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+.toggle-text span {
+  color: #2563eb;
+  cursor: pointer;
+  text-decoration: underline;
+  font-weight: 600;
+}
