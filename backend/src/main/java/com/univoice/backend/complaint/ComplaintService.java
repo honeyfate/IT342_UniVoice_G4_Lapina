@@ -14,6 +14,7 @@ import org.springframework.util.StringUtils;
 import com.univoice.backend.complaint.dto.BulkComplaintRequest;
 import com.univoice.backend.complaint.dto.CommentRequest;
 import com.univoice.backend.complaint.dto.ComplaintRequest;
+import com.univoice.backend.complaint.dto.ComplaintStatsResponse;
 import com.univoice.backend.complaint.dto.ComplaintUpdateRequest;
 
 import jakarta.persistence.criteria.Predicate;
@@ -64,6 +65,23 @@ public class ComplaintService {
     @Transactional(readOnly = true)
     public Complaint getById(String id) {
         return repository.findById(id).orElseThrow(() -> new ComplaintNotFoundException(id));
+    }
+
+    @Transactional(readOnly = true)
+    public ComplaintStatsResponse getStats() {
+        List<Complaint> complaints = repository.findAll();
+        long open = complaints.stream().filter(item -> "Open".equals(item.getStatus())).count();
+        long inProgress = complaints.stream().filter(item -> "In Progress".equals(item.getStatus())).count();
+        long resolved = complaints.stream().filter(item -> "Resolved".equals(item.getStatus())).count();
+
+        return new ComplaintStatsResponse(
+                complaints.size(),
+                open,
+                inProgress,
+                resolved,
+                countBy(complaints, Complaint::getCategory),
+                countBy(complaints, Complaint::getPriority)
+        );
     }
 
     public Complaint create(ComplaintRequest request) {
@@ -222,5 +240,16 @@ public class ComplaintService {
 
     private static String generateId() {
         return "c-" + UUID.randomUUID();
+    }
+
+    private static java.util.Map<String, Long> countBy(List<Complaint> complaints, java.util.function.Function<Complaint, String> getter) {
+        return complaints.stream()
+                .map(getter)
+                .filter(ComplaintService::hasValue)
+                .collect(java.util.stream.Collectors.groupingBy(
+                        value -> value,
+                        java.util.TreeMap::new,
+                        java.util.stream.Collectors.counting()
+                ));
     }
 }

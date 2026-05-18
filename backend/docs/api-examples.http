@@ -1,0 +1,50 @@
+### Health check
+GET http://localhost:8080/actuator/health
+
+### List complaints
+GET http://localhost:8080/api/complaints
+
+### Search complaints
+GET http://localhost:8080/api/complaints?q=grade&status=Open&priority=High
+
+### Create complaint
+POST http://localhost:8080/api/complaints
+Content-Type: application/json
+
+{
+  "name": "Alice Student",
+  "studentId": "S123456",
+  "email": "alice@example.edu",
+  "course": "IT342",
+  "category": "Academic",
+  "priority": "High",
+  "subject": "Missing grade",
+  "description": "My grade is not visible in the student portal."
+}
+
+### Update status
+PATCH http://localhost:8080/api/complaints/c-replace-this-id/status
+Content-Type: application/json
+
+{
+  "status": "In Progress"
+}
+
+### Assign complaint
+PATCH http://localhost:8080/api/complaints/c-replace-this-id/assignment
+Content-Type: application/json
+
+{
+  "assignedTo": "Registrar Office"
+}
+
+### Add comment
+POST http://localhost:8080/api/complaints/c-replace-this-id/comments
+Content-Type: application/json
+
+{
+  "text": "Forwarded to the registrar for verification."
+}
+
+### Delete complaint
+DELETE http://localhost:8080/api/complaints/c-replace-this-id

@@ -22,6 +22,7 @@ import com.univoice.backend.complaint.dto.CommentRequest;
 import com.univoice.backend.complaint.dto.CommentResponse;
 import com.univoice.backend.complaint.dto.ComplaintRequest;
 import com.univoice.backend.complaint.dto.ComplaintResponse;
+import com.univoice.backend.complaint.dto.ComplaintStatsResponse;
 import com.univoice.backend.complaint.dto.ComplaintUpdateRequest;
 
 import jakarta.validation.Valid;
@@ -44,6 +45,11 @@ public class ComplaintController {
         return service.findAll(q, status, priority).stream()
                 .map(ComplaintMapper::toResponse)
                 .toList();
+    }
+
+    @GetMapping("/stats")
+    public ComplaintStatsResponse stats() {
+        return service.getStats();
     }
 
     @GetMapping("/{id}")

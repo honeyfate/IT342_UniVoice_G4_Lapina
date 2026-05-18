@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Alice Student",
+    "studentId": "S123456",
+    "email": "alice@example.edu",
+    "course": "IT342",
+    "category": "Academic",
+    "priority": "High",
+    "subject": "Missing grade",
+    "description": "My grade is not visible in the student portal."
+  },
+  {
+    "name": "Ben Student",
+    "studentId": "S654321",
+    "email": "ben@example.edu",
+    "course": "CS101",
+    "category": "Facilities",
+    "priority": "Medium",
+    "subject": "Computer lab air conditioning",
+    "description": "The computer lab is too warm during afternoon classes."
+  }
+]
