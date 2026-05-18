@@ -7,19 +7,25 @@ function Pill({status}){
   return <span className={cls}>{status}</span>
 }
 
-export default function ComplaintList({ items, onToggle, onDelete }){
+function PriorityBadge({priority}){
+  const cls = priority==='Critical'? 'priority-critical': priority==='High'? 'priority-high': priority==='Low'? 'priority-low':'priority-medium'
+  return <span className={`priority-badge ${cls}`}>{priority}</span>
+}
+
+export default function ComplaintList({ items, onToggle, onDelete, onSelect }){
   if(items.length===0) return <ul className="complaint-list"><li className="small">No complaints found.</li></ul>
 
   return (
     <ul className="complaint-list">
       {items.map(c=> (
         <li key={c.id} className="complaint-item">
-          <div style={{flex:1}}>
+          <div style={{flex:1, cursor:'pointer'}} onClick={()=>onSelect(c.id)}>
             <div className="subject">{c.subject}</div>
             <div className="meta">{c.description.slice(0,200)}</div>
-            <div className="small">ID: {c.id} • {formatDate(c.createdAt)} • {c.course||'—'} • {c.category}</div>
+            <div className="small">ID: {c.id} • {formatDate(c.createdAt)} • {c.course||'—'} • {c.category} {(c.comments||[]).length>0 && `• ${(c.comments||[]).length} comment${(c.comments||[]).length===1?'':'s'}`}</div>
           </div>
           <div className="item-actions">
+            <PriorityBadge priority={c.priority||'Medium'} />
             <Pill status={c.status} />
             <button className="btn" onClick={()=> onToggle(c.id, c.status==='Resolved'? 'Open':'Resolved')}>{c.status==='Resolved'? 'Reopen':'Mark Resolved'}</button>
             <button className="btn" onClick={()=> { if(confirm('Delete this complaint?')) onDelete(c.id) }}>Delete</button>

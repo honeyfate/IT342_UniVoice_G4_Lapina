@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import ComplaintForm from './components/ComplaintForm'
 import ComplaintList from './components/ComplaintList'
 import ComplaintDetail from './components/ComplaintDetail'
+import Dashboard from './components/Dashboard'
 
 const STORAGE_KEY = 'univoice_complaints_v1'
 
@@ -14,6 +15,7 @@ export default function App(){
   const [complaints, setComplaints] = useState(() => readStorage())
   const [query, setQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
+  const [priorityFilter, setPriorityFilter] = useState('all')
   const [selectedId, setSelectedId] = useState(null)
 
   useEffect(()=>{ writeStorage(complaints) }, [complaints])
@@ -70,12 +72,13 @@ export default function App(){
     const q = query.trim().toLowerCase()
     return complaints.filter(c=>{
       if(statusFilter!=='all' && c.status!==statusFilter) return false
+      if(priorityFilter!=='all' && c.priority!==priorityFilter) return false
       if(!q) return true
       return [c.subject, c.description, c.course, c.id, c.studentId, c.name, c.category]
         .filter(Boolean)
         .some(s=>s.toLowerCase().includes(q))
     })
-  },[complaints,query,statusFilter])
+  },[complaints,query,statusFilter,priorityFilter])
 
   return (
     <div className="app-root">
@@ -84,6 +87,7 @@ export default function App(){
         <p className="subtitle">Submit and track complaints (stored in your browser)</p>
       </header>
       <main className="container">
+        <Dashboard complaints={complaints} />
         <section className="panel form-panel">
           <h2>Submit Complaint</h2>
           <ComplaintForm onSubmit={addComplaint} />
@@ -99,9 +103,16 @@ export default function App(){
               <option value="In Progress">In Progress</option>
               <option value="Resolved">Resolved</option>
             </select>
+            <select value={priorityFilter} onChange={e=>setPriorityFilter(e.target.value)}>
+              <option value="all">All priorities</option>
+              <option value="Low">Low</option>
+              <option value="Medium">Medium</option>
+              <option value="High">High</option>
+              <option value="Critical">Critical</option>
+            </select>
             <button className="btn" onClick={exportCsv}>Export CSV</button>
           </div>
-          <ComplaintList items={filtered} onToggle={updateStatus} onDelete={removeComplaint} />
+          <ComplaintList items={filtered} onToggle={updateStatus} onDelete={removeComplaint} onSelect={setSelectedId} />
         </section>
         {selectedId && <ComplaintDetail complaint={complaints.find(c=>c.id===selectedId)} onClose={()=>setSelectedId(null)} onAddComment={addComment} onRemoveComment={removeComment} onUpdateStatus={updateStatus} />}
       </main>

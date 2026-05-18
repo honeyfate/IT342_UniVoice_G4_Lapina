@@ -10,6 +10,7 @@ export default function ComplaintForm({ onSubmit }){
   const [email,setEmail] = useState('')
   const [course,setCourse] = useState('')
   const [category,setCategory] = useState('Academic')
+  const [priority,setPriority] = useState('Medium')
   const [subject,setSubject] = useState('')
   const [description,setDescription] = useState('')
 
@@ -24,13 +25,14 @@ export default function ComplaintForm({ onSubmit }){
       email: email.trim(),
       course: course.trim(),
       category,
+      priority,
       subject: subject.trim(),
       description: description.trim(),
       status: 'Open',
       createdAt: new Date().toISOString()
     }
     onSubmit(payload)
-    setName(''); setStudentId(''); setEmail(''); setCourse(''); setSubject(''); setDescription(''); setCategory('Academic')
+    setName(''); setStudentId(''); setEmail(''); setCourse(''); setSubject(''); setDescription(''); setCategory('Academic'); setPriority('Medium')
     alert('Complaint submitted — saved locally in your browser.')
   }
 
@@ -60,6 +62,15 @@ export default function ComplaintForm({ onSubmit }){
           <option value="Administrative">Administrative</option>
           <option value="Facilities">Facilities</option>
           <option value="Other">Other</option>
+        </select>
+      </label>
+
+      <label>Priority
+        <select value={priority} onChange={e=>setPriority(e.target.value)}>
+          <option value="Low">Low</option>
+          <option value="Medium">Medium</option>
+          <option value="High">High</option>
+          <option value="Critical">Critical</option>
         </select>
       </label>
 

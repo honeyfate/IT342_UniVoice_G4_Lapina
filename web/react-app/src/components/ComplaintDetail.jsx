@@ -41,6 +41,11 @@ export default function ComplaintDetail({ complaint, onClose, onAddComment, onRe
         </div>
 
         <div className="detail-row">
+          <div className="detail-label">Priority</div>
+          <div className="detail-value"><span className={`priority-badge priority-${complaint.priority?.toLowerCase()}`}>{complaint.priority || 'Medium'}</span></div>
+        </div>
+
+        <div className="detail-row">
           <div className="detail-label">Submitted</div>
           <div className="detail-value">{formatDate(complaint.createdAt)}</div>
         </div>
