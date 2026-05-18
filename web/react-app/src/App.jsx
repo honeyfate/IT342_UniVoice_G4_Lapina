@@ -54,6 +54,18 @@ export default function App(){
     }))
   }
 
+  function assignStaff(id, staffName){
+    setComplaints(prev => prev.map(p=> 
+      p.id===id? {...p, assignedTo: staffName||null, assignedAt: staffName? new Date().toISOString():null}:p
+    ))
+  }
+
+  function setDueDate(id, dueDate){
+    setComplaints(prev => prev.map(p=> 
+      p.id===id? {...p, dueDate: dueDate||null}:p
+    ))
+  }
+
   function exportCsv(){
     if(complaints.length===0){ alert('No complaints to export'); return }
     const keys = ['id','createdAt','status','category','subject','description','name','studentId','email','course']
@@ -114,7 +126,7 @@ export default function App(){
           </div>
           <ComplaintList items={filtered} onToggle={updateStatus} onDelete={removeComplaint} onSelect={setSelectedId} />
         </section>
-        {selectedId && <ComplaintDetail complaint={complaints.find(c=>c.id===selectedId)} onClose={()=>setSelectedId(null)} onAddComment={addComment} onRemoveComment={removeComment} onUpdateStatus={updateStatus} />}
+        {selectedId && <ComplaintDetail complaint={complaints.find(c=>c.id===selectedId)} onClose={()=>setSelectedId(null)} onAddComment={addComment} onRemoveComment={removeComment} onUpdateStatus={updateStatus} onAssignStaff={assignStaff} onSetDueDate={setDueDate} />}
       </main>
       <footer className="site-footer">
         <small>UniVoice — Demo. Data stored in browser.</small>
