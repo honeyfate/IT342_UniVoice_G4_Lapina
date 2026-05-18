@@ -6,6 +6,11 @@ import Dashboard from './components/Dashboard'
 
 const STORAGE_KEY = 'univoice_complaints_v1'
 
+const USERS = [
+  { name: 'Alice (Student)', role: 'student' },
+  { name: 'Bob (Student)', role: 'student' },
+  { name: 'Staff (Admin)', role: 'admin' }
+]
 function readStorage(){
   try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [] }catch(e){ return [] }
 }
@@ -17,6 +22,8 @@ export default function App(){
   const [statusFilter, setStatusFilter] = useState('all')
   const [priorityFilter, setPriorityFilter] = useState('all')
   const [selectedId, setSelectedId] = useState(null)
+  const [currentUser, setCurrentUser] = useState(USERS[0])
+  const [selectedIds, setSelectedIds] = useState([])
 
   useEffect(()=>{ writeStorage(complaints) }, [complaints])
 
@@ -52,6 +59,55 @@ export default function App(){
       if(p.id!==complaintId) return p
       return {...p, comments: (p.comments||[]).filter(c=>c.id!==commentId)}
     }))
+  }
+
+  // selection for bulk actions
+  function toggleSelect(id){
+    setSelectedIds(prev => prev.includes(id) ? prev.filter(x=>x!==id) : [...prev, id])
+  }
+
+  function clearSelection(){ setSelectedIds([]) }
+
+  function bulkDelete(){
+    if(selectedIds.length===0){ alert('No items selected'); return }
+    if(!confirm(`Delete ${selectedIds.length} selected complaint(s)?`)) return
+    setComplaints(prev => prev.filter(p=> !selectedIds.includes(p.id)))
+    clearSelection()
+  }
+
+  function bulkMarkResolved(){
+    if(selectedIds.length===0){ alert('No items selected'); return }
+    setComplaints(prev => prev.map(p=> selectedIds.includes(p.id)? {...p, status:'Resolved', resolvedAt: new Date().toISOString() }: p))
+    clearSelection()
+  }
+
+  function bulkAssign(staffName){
+    if(selectedIds.length===0){ alert('No items selected'); return }
+    setComplaints(prev => prev.map(p=> selectedIds.includes(p.id)? {...p, assignedTo: staffName, assignedAt: staffName? new Date().toISOString():null }: p))
+    clearSelection()
+  }
+
+  function exportJson(){
+    const blob = new Blob([JSON.stringify(complaints,null,2)],{type:'application/json'})
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url; a.download = 'complaints.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url)
+  }
+
+  function importJsonFile(file){
+    const reader = new FileReader()
+    reader.onload = e=>{
+      try{
+        const data = JSON.parse(e.target.result)
+        if(!Array.isArray(data)) throw new Error('Invalid file')
+        // merge, avoid id collisions
+        const existingIds = new Set(complaints.map(c=>c.id))
+        const newItems = data.filter(d=>d && d.id && !existingIds.has(d.id))
+        if(newItems.length===0){ alert('No new complaints found in file') }
+        setComplaints(prev => [...newItems, ...prev])
+      }catch(err){ alert('Failed to import JSON: '+err.message) }
+    }
+    reader.readAsText(file)
   }
 
   function assignStaff(id, staffName){
@@ -95,8 +151,18 @@ export default function App(){
   return (
     <div className="app-root">
       <header className="site-header">
-        <h1>UniVoice — Student Complaint System</h1>
-        <p className="subtitle">Submit and track complaints (stored in your browser)</p>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+          <div>
+            <h1>UniVoice — Student Complaint System</h1>
+            <p className="subtitle">Submit and track complaints (stored in your browser)</p>
+          </div>
+          <div style={{display:'flex',gap:10,alignItems:'center'}}>
+            <label style={{color:'white',fontSize:13,opacity:.95}}>User:</label>
+            <select value={currentUser.name} onChange={e=> setCurrentUser(USERS.find(u=>u.name===e.target.value))}>
+              {USERS.map(u=> <option key={u.name} value={u.name}>{u.name} — {u.role}</option>)}
+            </select>
+          </div>
+        </div>
       </header>
       <main className="container">
         <Dashboard complaints={complaints} />
@@ -123,8 +189,21 @@ export default function App(){
               <option value="Critical">Critical</option>
             </select>
             <button className="btn" onClick={exportCsv}>Export CSV</button>
+            <button className="btn" onClick={exportJson}>Export JSON</button>
+            <label className="btn" style={{display:'inline-block',cursor:'pointer',padding:'8px 12px'}}>
+              Import JSON
+              <input type="file" accept="application/json" style={{display:'none'}} onChange={e=>{ if(e.target.files && e.target.files[0]) importJsonFile(e.target.files[0]); e.target.value='' }} />
+            </label>
           </div>
-          <ComplaintList items={filtered} onToggle={updateStatus} onDelete={removeComplaint} onSelect={setSelectedId} />
+
+          <div style={{display:'flex',gap:8,alignItems:'center',marginBottom:10}}>
+            <div style={{fontSize:13,color:'#374151'}}>Selected: {selectedIds.length}</div>
+            <button className="btn" onClick={bulkMarkResolved}>Mark Resolved</button>
+            <button className="btn" onClick={bulkDelete}>Delete</button>
+            <button className="btn" onClick={()=>{ const name = prompt('Assign selected to (staff name):'); if(name) bulkAssign(name) }}>Assign...</button>
+          </div>
+
+          <ComplaintList items={filtered} onToggle={updateStatus} onDelete={removeComplaint} onSelect={setSelectedId} selectedIds={selectedIds} onToggleSelect={toggleSelect} />
         </section>
         {selectedId && <ComplaintDetail complaint={complaints.find(c=>c.id===selectedId)} onClose={()=>setSelectedId(null)} onAddComment={addComment} onRemoveComment={removeComment} onUpdateStatus={updateStatus} onAssignStaff={assignStaff} onSetDueDate={setDueDate} />}
       </main>
