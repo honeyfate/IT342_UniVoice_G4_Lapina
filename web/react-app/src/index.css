@@ -77,4 +77,19 @@ input,select,textarea{width:100%;padding:8px;border:1px solid #d1d5db;border-rad
 .add-comment{margin-top:12px}
 .add-comment textarea{width:100%;padding:8px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;resize:vertical}
 .add-comment button{margin-top:8px}
+/* Timeline */
+.timeline{margin-top:20px;border-top:2px solid #f0f4f8;padding-top:16px}
+.timeline h3{margin:0 0 12px 0;font-size:14px}
+.timeline-items{position:relative}
+.timeline-items::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:2px;background:#e5e7eb}
+.timeline-item{position:relative;margin-bottom:16px;padding-left:32px;font-size:13px}
+.timeline-marker{position:absolute;left:0;top:2px;width:18px;height:18px;background:white;border:3px solid #d1d5db;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.timeline-item.timeline-created .timeline-marker{border-color:#0369a1;background:#0369a1}
+.timeline-item.timeline-status-change .timeline-marker{border-color:#f59e0b;background:#f59e0b}
+.timeline-item.timeline-comment .timeline-marker{border-color:#10b981;background:#10b981}
+.timeline-item.timeline-assigned .timeline-marker{border-color:#8b5cf6;background:#8b5cf6}
+.timeline-item.timeline-due-date .timeline-marker{border-color:#6b7280;background:#6b7280}
+.timeline-item.timeline-due-date.overdue .timeline-marker{border-color:var(--critical);background:var(--critical)}
+.timeline-label{font-weight:600;color:#111}
+.timeline-time{font-size:11px;color:var(--muted);margin-top:2px}
 @media(max-width:880px){.container{flex-direction:column;padding:12px}.row{flex-direction:column}}
