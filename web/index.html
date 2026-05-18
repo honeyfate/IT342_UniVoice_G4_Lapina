@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>UniVoice - Student Complaints</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <h1>UniVoice — Student Complaint System</h1>
+      <p class="subtitle">Submit and track complaints anonymously or with your details.</p>
+    </header>
+
+    <main class="container">
+      <section class="panel form-panel">
+        <h2>Submit Complaint</h2>
+        <form id="complaintForm">
+          <div class="row">
+            <label>Full name
+              <input type="text" id="name" placeholder="Your full name (optional)" />
+            </label>
+            <label>Student ID
+              <input type="text" id="studentId" placeholder="e.g. s1234567" />
+            </label>
+          </div>
+
+          <div class="row">
+            <label>Email
+              <input type="email" id="email" placeholder="you@example.edu (optional)" />
+            </label>
+            <label>Course
+              <input type="text" id="course" placeholder="Course or unit code (optional)" />
+            </label>
+          </div>
+
+          <label>Category
+            <select id="category">
+              <option value="Academic">Academic</option>
+              <option value="Administrative">Administrative</option>
+              <option value="Facilities">Facilities</option>
+              <option value="Other">Other</option>
+            </select>
+          </label>
+
+          <label>Subject
+            <input type="text" id="subject" required placeholder="Short subject of the complaint" />
+          </label>
+
+          <label>Description
+            <textarea id="description" required rows="5" placeholder="Describe the issue in detail"></textarea>
+          </label>
+
+          <div class="actions">
+            <button type="submit" class="btn primary">Submit Complaint</button>
+            <button type="button" id="clearForm" class="btn">Clear</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel list-panel">
+        <h2>Complaints</h2>
+
+        <div class="controls">
+          <input id="search" placeholder="Search subject, description, course, id..." />
+          <select id="filterStatus">
+            <option value="all">All statuses</option>
+            <option value="Open">Open</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Resolved">Resolved</option>
+          </select>
+          <button id="exportCsv" class="btn">Export CSV</button>
+        </div>
+
+        <ul id="complaintList" class="complaint-list"></ul>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <small>UniVoice — For demonstration purposes only. Data is stored in your browser.</small>
+    </footer>
+
+    <script src="js/app.js"></script>
+  </body>
+</html>
