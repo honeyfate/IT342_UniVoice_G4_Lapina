@@ -2,6 +2,15 @@
 
 This is a small React frontend (Vite) for the UniVoice complaint system. Data is persisted to `localStorage` for demo purposes.
 
+**Features:**
+- Submit complaints with category, subject, description, optional student ID and course.
+- View all complaints in a list with filtering by status (Open, In Progress, Resolved).
+- Search complaints by subject, description, course, ID, or category.
+- **Comments & Notes** — Click on any complaint to open its detail modal and add tracking notes/updates.
+- Export complaints to CSV.
+- Mark complaints as resolved/reopen them.
+- Delete complaints.
+
 Quick start (Windows PowerShell):
 
 1. Open PowerShell and change to the react app folder:

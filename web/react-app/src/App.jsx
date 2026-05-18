@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import ComplaintForm from './components/ComplaintForm'
 import ComplaintList from './components/ComplaintList'
+import ComplaintDetail from './components/ComplaintDetail'
 
 const STORAGE_KEY = 'univoice_complaints_v1'
 
@@ -13,6 +14,7 @@ export default function App(){
   const [complaints, setComplaints] = useState(() => readStorage())
   const [query, setQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
+  const [selectedId, setSelectedId] = useState(null)
 
   useEffect(()=>{ writeStorage(complaints) }, [complaints])
 
@@ -26,6 +28,28 @@ export default function App(){
 
   function removeComplaint(id){
     setComplaints(prev => prev.filter(p=>p.id!==id))
+    setSelectedId(null)
+  }
+
+  function addComment(id, comment){
+    setComplaints(prev => prev.map(p=> {
+      if(p.id!==id) return p
+      return {
+        ...p,
+        comments: [...(p.comments||[]), {
+          id: 'cm-'+Date.now().toString(36),
+          text: comment.trim(),
+          createdAt: new Date().toISOString()
+        }]
+      }
+    }))
+  }
+
+  function removeComment(complaintId, commentId){
+    setComplaints(prev => prev.map(p=> {
+      if(p.id!==complaintId) return p
+      return {...p, comments: (p.comments||[]).filter(c=>c.id!==commentId)}
+    }))
   }
 
   function exportCsv(){
@@ -79,6 +103,7 @@ export default function App(){
           </div>
           <ComplaintList items={filtered} onToggle={updateStatus} onDelete={removeComplaint} />
         </section>
+        {selectedId && <ComplaintDetail complaint={complaints.find(c=>c.id===selectedId)} onClose={()=>setSelectedId(null)} onAddComment={addComment} onRemoveComment={removeComment} onUpdateStatus={updateStatus} />}
       </main>
       <footer className="site-footer">
         <small>UniVoice — Demo. Data stored in browser.</small>
