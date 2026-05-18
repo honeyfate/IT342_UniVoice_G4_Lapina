@@ -22,7 +22,12 @@ export default function ComplaintList({ items, onToggle, onDelete, onSelect }){
           <div style={{flex:1, cursor:'pointer'}} onClick={()=>onSelect(c.id)}>
             <div className="subject">{c.subject}</div>
             <div className="meta">{c.description.slice(0,200)}</div>
-            <div className="small">ID: {c.id} • {formatDate(c.createdAt)} • {c.course||'—'} • {c.category} {(c.comments||[]).length>0 && `• ${(c.comments||[]).length} comment${(c.comments||[]).length===1?'':'s'}`}</div>
+            <div className="small">
+              ID: {c.id} • {formatDate(c.createdAt).slice(0,10)} • {c.course||'—'} • {c.category}
+              {(c.comments||[]).length>0 && ` • ${(c.comments||[]).length} comment${(c.comments||[]).length===1?'':'s'}`}
+              {c.assignedTo && ` • 👤 ${c.assignedTo}`}
+              {c.dueDate && ` • 📅 Due ${new Date(c.dueDate).toLocaleDateString()}`}
+            </div>
           </div>
           <div className="item-actions">
             <PriorityBadge priority={c.priority||'Medium'} />

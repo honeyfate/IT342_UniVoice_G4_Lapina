@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
+import Timeline from './Timeline'
 
 function formatDate(iso){ try{ return new Date(iso).toLocaleString() }catch(e){ return iso } }
 
-export default function ComplaintDetail({ complaint, onClose, onAddComment, onRemoveComment, onUpdateStatus }){
+export default function ComplaintDetail({ complaint, onClose, onAddComment, onRemoveComment, onUpdateStatus, onAssignStaff, onSetDueDate }){
   const [comment, setComment] = useState('')
+  const [assignInput, setAssignInput] = useState(complaint.assignedTo||'')
 
   const handleAddComment = ()=>{
     if(!comment.trim()) return
@@ -50,6 +52,31 @@ export default function ComplaintDetail({ complaint, onClose, onAddComment, onRe
           <div className="detail-value">{formatDate(complaint.createdAt)}</div>
         </div>
 
+        <div className="detail-row">
+          <div className="detail-label">Assigned To</div>
+          <div className="detail-value">
+            <input 
+              value={assignInput} 
+              onChange={e=>setAssignInput(e.target.value)} 
+              onBlur={()=>onAssignStaff(complaint.id, assignInput||null)}
+              placeholder="Enter staff name..."
+              style={{width:'100%',padding:'6px',border:'1px solid #d1d5db',borderRadius:'4px',marginTop:'4px',fontSize:'13px'}}
+            />
+          </div>
+        </div>
+
+        <div className="detail-row">
+          <div className="detail-label">Due Date</div>
+          <div className="detail-value">
+            <input 
+              type="date"
+              value={complaint.dueDate? complaint.dueDate.slice(0,10):''}
+              onChange={e=>onSetDueDate(complaint.id, e.target.value? e.target.value+'T23:59:59Z':null)}
+              style={{width:'100%',padding:'6px',border:'1px solid #d1d5db',borderRadius:'4px',marginTop:'4px',fontSize:'13px'}}
+            />
+          </div>
+        </div>
+
         {complaint.name && <div className="detail-row">
           <div className="detail-label">Name</div>
           <div className="detail-value">{complaint.name}</div>
@@ -74,6 +101,8 @@ export default function ComplaintDetail({ complaint, onClose, onAddComment, onRe
           <div className="detail-label">Description</div>
           <div className="detail-value" style={{whiteSpace:'pre-wrap'}}>{complaint.description}</div>
         </div>
+
+        <Timeline complaint={complaint} />
 
         <div className="comments-section">
           <h3 style={{margin:'0 0 12px 0',fontSize:14}}>Comments & Notes ({(complaint.comments||[]).length})</h3>
